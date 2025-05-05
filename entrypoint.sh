@@ -79,7 +79,8 @@ wait_for_service() {
         echo "::debug::Kafka response: $output"
         echo "::debug::Kafka exit code: $kafka_exit"
 
-        if echo "$output" | grep -q "Metadata for" || [ $kafka_exit -eq 0 ]; then
+        # Check for successful connection - must have exit code 0 OR contain "Metadata for" without error messages
+        if { [ $kafka_exit -eq 0 ] && ! echo "$output" | grep -q "ERROR:"; } || { echo "$output" | grep -q "Metadata for" && ! echo "$output" | grep -q "ERROR:"; }; then
           echo " - ✓ Kafka is ready!"
           echo "::endgroup::"
           return 0
@@ -104,7 +105,7 @@ wait_for_service() {
           local output=$(redis-cli -h "$INPUT_HOST" -p "$INPUT_PORT" -a "$INPUT_PASSWORD" ping 2>&1)
           local redis_exit=$?
           echo "::debug::Redis PING response: $output"
-          echo "::debug::Redis exit code: $redis_exit"f
+          echo "::debug::Redis exit code: $redis_exit"
         fi
 
         if echo "$output" | grep -q "PONG"; then
