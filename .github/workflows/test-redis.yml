@@ -13,7 +13,7 @@ concurrency:
 jobs:
   test:
     name: Test Redis
-    runs-on: [k8s-ci-dind]
+    runs-on: ubuntu-latest
     services:
       redis:
         image: redis:7.4.3
@@ -31,7 +31,7 @@ jobs:
 
   test-timeout:
     name: Test Redis - Timeout
-    runs-on: [k8s-ci-dind]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
