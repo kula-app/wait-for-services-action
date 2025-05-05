@@ -18,6 +18,7 @@ check_tcp_port() {
 
 # Wait for service to be ready
 wait_for_service() {
+  local start_time=$(date +%s)
   local elapsed=0
 
   echo "::group::Waiting for $INPUT_TYPE service to be ready"
@@ -172,6 +173,10 @@ wait_for_service() {
         ;;
     esac
 
+    # Calculate actual elapsed time
+    local current_time=$(date +%s)
+    elapsed=$((current_time - start_time))
+
     # Check timeout
     if [ "$WAIT_INDEFINITELY" = "false" ] && [ $elapsed -ge "$TIMEOUT" ]; then
       echo "::error::Timeout reached. Service $INPUT_TYPE is not ready after $TIMEOUT seconds."
@@ -179,7 +184,6 @@ wait_for_service() {
       return 1
     fi
 
-    elapsed=$((elapsed + INTERVAL))
     if [ $((elapsed % 5)) -eq 0 ]; then
       echo " - Still waiting for $INPUT_TYPE service... ($elapsed seconds elapsed)"
     else
