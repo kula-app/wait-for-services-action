@@ -13,7 +13,12 @@ check_tcp_port() {
   local exit_code=$?
   echo "::debug::TCP check output: $output"
   echo "::debug::TCP check exit code: $exit_code"
-  return $exit_code
+
+  # Check both exit code and if the output contains certain error messages
+  if [ $exit_code -ne 0 ] || echo "$output" | grep -q "Name or service not known" || echo "$output" | grep -q "Connection refused"; then
+    return 1
+  fi
+  return 0
 }
 
 # Wait for service to be ready
@@ -110,7 +115,7 @@ wait_for_service() {
       echo "::debug::PostgreSQL response: $output"
       echo "::debug::psql exit code: $psql_exit"
 
-      if [ $psql_exit -eq 0 ]; then
+      if [ $psql_exit -eq 0 ] && ! echo "$output" | grep -q "error"; then
         echo " - ✓ PostgreSQL is ready!"
         echo "::endgroup::"
         return 0
