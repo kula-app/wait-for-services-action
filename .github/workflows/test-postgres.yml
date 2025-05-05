@@ -1,0 +1,63 @@
+name: Test PostgreSQL
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for PostgreSQL
+        uses: ./
+        with:
+          type: postgres
+          host: postgres
+          port: 5432
+          username: postgres
+          password: postgres
+          database: testdb
+          timeout: 300
+
+  test-timeout:
+    name: Test PostgreSQL - Timeout
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for PostgreSQL
+        id: wait-for-postgres
+        uses: ./
+        continue-on-error: true
+        with:
+          type: postgres
+          host: nonexistent-host
+          port: 5432
+          username: postgres
+          password: postgres
+          database: testdb
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-postgres.outcome != 'failure'
+        run: exit 1

@@ -6,7 +6,7 @@ branding:
 
 inputs:
   type:
-    description: 'The type of service to wait for (android-emulator, kafka, mongodb, nats, redis)'
+    description: 'The type of service to wait for (android-emulator, kafka, mongodb, nats, postgres, redis)'
     required: true
   host:
     description: 'The host of the service'
@@ -19,6 +19,9 @@ inputs:
     required: false
   password:
     description: 'The password for the service'
+    required: false
+  database:
+    description: 'The database name (for postgres)'
     required: false
   timeout:
     description: 'The timeout in seconds for the service to be ready'
@@ -42,6 +45,7 @@ runs:
     INPUT_PORT: ${{ inputs.port }}
     INPUT_USERNAME: ${{ inputs.username }}
     INPUT_PASSWORD: ${{ inputs.password }}
+    INPUT_DATABASE: ${{ inputs.database }}
     INPUT_TIMEOUT: ${{ inputs.timeout }}
     INPUT_INTERVAL: ${{ inputs.interval }}
     INPUT_WAIT_INDEFINITELY: ${{ inputs.wait-indefinitely }}
