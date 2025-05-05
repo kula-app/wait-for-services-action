@@ -1,0 +1,47 @@
+name: 'Wait for Services'
+description: 'Wait for various services to be ready with different readiness checks'
+branding:
+  icon: 'clock'
+  color: 'blue'
+
+inputs:
+  type:
+    description: 'The type of service to wait for (android-emulator, kafka, mongodb, nats, redis)'
+    required: true
+  host:
+    description: 'The host of the service'
+    required: true
+  port:
+    description: 'The port of the service'
+    required: true
+  username:
+    description: 'The username for the service'
+    required: false
+  password:
+    description: 'The password for the service'
+    required: false
+  timeout:
+    description: 'The timeout in seconds for the service to be ready'
+    required: false
+    default: '20'
+  interval:
+    description: 'The interval in seconds to check if the service is ready'
+    required: false
+    default: '1'
+  wait-indefinitely:
+    description: 'If true, the action will wait indefinitely for the service to be ready'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    INPUT_TYPE: ${{ inputs.type }}
+    INPUT_HOST: ${{ inputs.host }}
+    INPUT_PORT: ${{ inputs.port }}
+    INPUT_USERNAME: ${{ inputs.username }}
+    INPUT_PASSWORD: ${{ inputs.password }}
+    INPUT_TIMEOUT: ${{ inputs.timeout }}
+    INPUT_INTERVAL: ${{ inputs.interval }}
+    INPUT_WAIT_INDEFINITELY: ${{ inputs.wait-indefinitely }}
