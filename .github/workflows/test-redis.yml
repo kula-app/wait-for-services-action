@@ -1,0 +1,47 @@
+name: Test Redis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: [k8s-ci-dind]
+    services:
+      redis:
+        image: redis:7.4.3
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Redis
+        uses: ./ci/actions/wait-for-services
+        with:
+          type: redis
+          host: redis
+          port: 6379
+          timeout: 300
+
+  test-timeout:
+    name: Test Timeout
+    runs-on: [k8s-ci-dind]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Redis
+        id: wait-for-redis
+        uses: ./ci/actions/wait-for-services
+        continue-on-error: true
+        with:
+          type: redis
+          host: redis
+          port: 6379
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-redis.outcome != 'failure'
+        run: exit 1

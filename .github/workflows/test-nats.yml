@@ -1,0 +1,47 @@
+name: Test NATS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: [k8s-ci-dind]
+    services:
+      nats:
+        image: nats:2.11.3
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for NATS
+        uses: ./ci/actions/wait-for-services
+        with:
+          type: nats
+          host: nats
+          port: 4222
+          timeout: 300
+
+  test-timeout:
+    name: Test Timeout
+    runs-on: [k8s-ci-dind]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for NATS
+        id: wait-for-nats
+        uses: ./ci/actions/wait-for-services
+        continue-on-error: true
+        with:
+          type: nats
+          host: nats
+          port: 4222
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-nats.outcome != 'failure'
+        run: exit 1

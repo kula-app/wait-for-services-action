@@ -1,0 +1,51 @@
+name: Test Android Emulator
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: [self-hosted, linux, docker]
+    services:
+      android-emulator:
+        image: mingc/android-build-box:1.29.0
+        ports:
+          - 5555:5555
+        options: >-
+          --device /dev/kvm
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Android Emulator
+        uses: ./ci/actions/wait-for-services
+        with:
+          type: android-emulator
+          host: android-emulator
+          port: 5555
+          timeout: 300
+
+  test-timeout:
+    name: Test Timeout
+    runs-on: [self-hosted, linux, docker]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Android Emulator
+        id: wait-for-android-emulator
+        uses: ./ci/actions/wait-for-services
+        continue-on-error: true
+        with:
+          type: android-emulator
+          host: android-emulator
+          port: 5555
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-android-emulator.outcome != 'failure'
+        run: exit 1

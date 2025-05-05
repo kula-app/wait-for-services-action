@@ -1,0 +1,47 @@
+name: Test MongoDB
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: [k8s-ci-dind]
+    services:
+      mongodb:
+        image: mongo:8.0.9
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for MongoDB
+        uses: ./ci/actions/wait-for-services
+        with:
+          type: mongodb
+          host: mongodb
+          port: 27017
+          timeout: 300
+
+  test-timeout:
+    name: Test Timeout
+    runs-on: [k8s-ci-dind]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for MongoDB
+        id: wait-for-mongodb
+        uses: ./ci/actions/wait-for-services
+        continue-on-error: true
+        with:
+          type: mongodb
+          host: mongodb
+          port: 27017
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-mongodb.outcome != 'failure'
+        run: exit 1
