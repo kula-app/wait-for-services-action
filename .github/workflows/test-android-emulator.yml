@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test
+    name: Test Android Emulator
     runs-on: [k8s-ci-dind]
     services:
       android-emulator:
@@ -34,7 +34,7 @@ jobs:
           timeout: 300
 
   test-timeout:
-    name: Test Timeout
+    name: Test Android Emulator - Timeout
     runs-on: [k8s-ci-dind]
     timeout-minutes: 10
     steps:

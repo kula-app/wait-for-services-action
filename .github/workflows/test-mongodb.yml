@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test
+    name: Test MongoDB
     runs-on: [k8s-ci-dind]
     services:
       mongodb:
@@ -30,7 +30,7 @@ jobs:
           timeout: 300
 
   test-timeout:
-    name: Test Timeout
+    name: Test MongoDB - Timeout
     runs-on: [k8s-ci-dind]
     timeout-minutes: 5
     steps:

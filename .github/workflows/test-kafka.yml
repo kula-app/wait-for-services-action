@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test
+    name: Test Kafka
     runs-on: [k8s-ci-dind]
     services:
       kafka:
@@ -50,7 +50,7 @@ jobs:
           timeout: 300
 
   test-timeout:
-    name: Test Timeout
+    name: Test Kafka - Timeout
     runs-on: [k8s-ci-dind]
     timeout-minutes: 10
     steps:
