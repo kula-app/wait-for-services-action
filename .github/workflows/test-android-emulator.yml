@@ -13,7 +13,7 @@ concurrency:
 jobs:
   test:
     name: Test Android Emulator
-    runs-on: [k8s-ci-dind]
+    runs-on: ubuntu-latest
     services:
       android-emulator:
         image: mingc/android-build-box:1.29.0
@@ -35,7 +35,7 @@ jobs:
 
   test-timeout:
     name: Test Android Emulator - Timeout
-    runs-on: [k8s-ci-dind]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4

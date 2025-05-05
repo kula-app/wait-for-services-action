@@ -13,7 +13,7 @@ concurrency:
 jobs:
   test:
     name: Test NATS
-    runs-on: [k8s-ci-dind]
+    runs-on: ubuntu-latest
     services:
       nats:
         image: nats:2.11.3
@@ -31,7 +31,7 @@ jobs:
 
   test-timeout:
     name: Test NATS - Timeout
-    runs-on: [k8s-ci-dind]
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
