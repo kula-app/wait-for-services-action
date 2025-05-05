@@ -37,7 +37,7 @@ wait_for_service() {
         local output=$(mongosh --host "$INPUT_HOST" --port "$INPUT_PORT" --eval "db.runCommand({ping:1})" 2>&1)
         echo "::debug::MongoDB response: $output"
 
-        if echo "$output" | grep -q '"ok" : 1'; then
+        if echo "$output" | grep -q '"ok" : 1' || echo "$output" | grep -q "ok: 1"; then
           echo " - ✓ MongoDB is ready!"
           echo "::endgroup::"
           return 0
