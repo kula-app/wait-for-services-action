@@ -101,9 +101,6 @@ wait_for_service() {
       "android-emulator")
         echo " - Checking Android emulator boot status..."
 
-        cat /etc/hosts
-        cat /etc/resolv.conf
-
         echo "Attempting ADB connect to $INPUT_HOST:$INPUT_PORT"
         adb connect "$INPUT_HOST:$INPUT_PORT" 2>&1
         local connect_result=$?
