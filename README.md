@@ -16,7 +16,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for emulator
-  uses: ./ci/actions/wait-for-services
+  uses: ./
   with:
     type: android-emulator
     host: phone
@@ -27,7 +27,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for Kafka
-  uses: ./ci/actions/wait-for-services
+  uses: ./
   with:
     type: kafka
     host: kafka
@@ -38,7 +38,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for MongoDB
-  uses: ./ci/actions/wait-for-services
+  uses: ./
   with:
     type: mongodb
     host: mongodb
@@ -49,7 +49,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for NATS
-  uses: ./ci/actions/wait-for-services
+  uses: ./
   with:
     type: nats
     host: nats
@@ -60,7 +60,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for Redis
-  uses: ./ci/actions/wait-for-services
+  uses: ./
   with:
     type: redis
     host: redis
