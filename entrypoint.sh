@@ -13,12 +13,7 @@ check_tcp_port() {
   local exit_code=$?
   echo "::debug::TCP check output: $output"
   echo "::debug::TCP check exit code: $exit_code"
-
-  # Check both exit code and if the output contains certain error messages
-  if [ $exit_code -ne 0 ] || echo "$output" | grep -q "Name or service not known" || echo "$output" | grep -q "Connection refused"; then
-    return 1
-  fi
-  return 0
+  return $exit_code
 }
 
 # Wait for service to be ready

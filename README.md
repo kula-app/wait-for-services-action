@@ -17,7 +17,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for emulator
-  uses: ./
+  uses: kula-app/wait-for-services@main
   with:
     type: android-emulator
     host: phone
@@ -28,7 +28,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for Kafka
-  uses: ./
+  uses: kula-app/wait-for-services@main
   with:
     type: kafka
     host: kafka
@@ -39,7 +39,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for MongoDB
-  uses: ./
+  uses: kula-app/wait-for-services@main
   with:
     type: mongodb
     host: mongodb
@@ -50,7 +50,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for NATS
-  uses: ./
+  uses: kula-app/wait-for-services@main
   with:
     type: nats
     host: nats
@@ -61,7 +61,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for PostgreSQL
-  uses: ./
+  uses: kula-app/wait-for-services@main
   with:
     type: postgres
     host: localhost
@@ -75,7 +75,7 @@ This action waits for a service to be ready.
 
 ```yaml
 - name: Wait for Redis
-  uses: ./
+  uses: kula-app/wait-for-services@main
   with:
     type: redis
     host: redis
