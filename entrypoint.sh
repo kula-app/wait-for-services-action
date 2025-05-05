@@ -6,29 +6,11 @@ TIMEOUT=${INPUT_TIMEOUT:-20}
 INTERVAL=${INPUT_INTERVAL:-1}
 WAIT_INDEFINITELY=${INPUT_WAIT_INDEFINITELY:-false}
 
-# Function to check if a TCP port is open
-check_tcp_port() {
-  echo "::debug::Checking TCP connectivity to $INPUT_HOST:$INPUT_PORT"
-  local output=$(nc -z -v "$INPUT_HOST" "$INPUT_PORT" 2>&1)
-  local exit_code=$?
-  echo "::debug::TCP check output: $output"
-  echo "::debug::TCP check exit code: $exit_code"
-  return $exit_code
-}
-
-# Wait for service to be ready
 wait_for_service() {
   local start_time=$(date +%s)
   local elapsed=0
 
   echo "::group::Waiting for $INPUT_TYPE service to be ready"
-
-  # First check if we can reach the host at all
-  if ! check_tcp_port; then
-    echo "::warning::Initial TCP connection to $INPUT_HOST:$INPUT_PORT failed. Will keep trying..."
-  else
-    echo " - ✓ Initial TCP connection to $INPUT_HOST:$INPUT_PORT successful"
-  fi
 
   while true; do
     # Check if service is ready based on type
@@ -119,28 +101,52 @@ wait_for_service() {
       "android-emulator")
         echo " - Checking Android emulator boot status..."
 
-        # First try to connect to ADB server
-        adb connect "$INPUT_HOST:$INPUT_PORT" >/dev/null 2>&1
+        echo "Attempting ADB connect to $INPUT_HOST:$INPUT_PORT"
+        adb connect "$INPUT_HOST:$INPUT_PORT" 2>&1
+        local connect_result=$?
+        echo "ADB connect exit code: $connect_result"
 
-        # Then check if device is in the list
+        echo "Checking ADB devices"
         local adb_devices=$(adb devices)
         echo "::debug::ADB devices: $adb_devices"
+
         if ! echo "$adb_devices" | grep -q "$INPUT_HOST:$INPUT_PORT"; then
-          echo "::warning::Device not in ADB devices list, trying to reconnect"
-          adb disconnect "$INPUT_HOST:$INPUT_PORT" >/dev/null 2>&1
-          adb connect "$INPUT_HOST:$INPUT_PORT" >/dev/null 2>&1
+          echo "Warning: Device not in ADB devices list, exiting"
+          echo "::endgroup::"
+          return 1
         fi
 
-        local adb_output=$(adb -s "$INPUT_HOST:$INPUT_PORT" shell getprop sys.boot_completed 2>&1)
+        local adb_device="$INPUT_HOST:$INPUT_PORT"
+        local adb_output=$(adb -s "$adb_device" shell getprop sys.boot_completed 2>&1)
         local adb_exit=$?
         local boot_status=$(echo "$adb_output" | tr -d '\r')
 
         echo "::debug::ADB command output: $adb_output"
         echo "::debug::ADB exit code: $adb_exit"
-        echo " - Current boot status: $boot_status"
+
+        # Check if adb command failed
+        if [ $adb_exit -ne 0 ]; then
+          echo "::warning::ADB command failed with exit code $adb_exit"
+          echo "::debug::Trying to restart ADB server..."
+          adb kill-server
+          adb start-server
+
+          # Try connect again
+          adb connect "$adb_device" >/dev/null 2>&1
+
+          # Retry the command
+          adb_output=$(adb -s "$adb_device" shell getprop sys.boot_completed 2>&1)
+          adb_exit=$?
+          boot_status=$(echo "$adb_output" | tr -d '\r')
+
+          echo "::debug::ADB command output after restart: $adb_output"
+          echo "::debug::ADB exit code after restart: $adb_exit"
+        fi
+
+        echo " - Current boot status: ${boot_status:-unknown}"
 
         echo " - Checking ADB connection..."
-        if ! adb -s "$INPUT_HOST:$INPUT_PORT" shell echo "Connection test" >/dev/null 2>&1; then
+        if ! adb -s "$adb_device" shell echo "Connection test" >/dev/null 2>&1; then
           echo "::error::ADB connection failed"
           echo "::endgroup::"
           return 1
@@ -155,8 +161,8 @@ wait_for_service() {
         echo " - ✓ Android emulator is fully booted and ready!"
 
         echo " - Device info:"
-        adb -s "$INPUT_HOST:$INPUT_PORT" shell getprop ro.product.model
-        adb -s "$INPUT_HOST:$INPUT_PORT" shell getprop ro.build.version.release
+        adb -s "$adb_device" shell getprop ro.product.model
+        adb -s "$adb_device" shell getprop ro.build.version.release
 
         echo "::endgroup::"
         return 0
