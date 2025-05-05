@@ -217,8 +217,6 @@ wait_for_service() {
 
     if [ $((elapsed % 5)) -eq 0 ]; then
       echo " - Still waiting for $INPUT_TYPE service... ($elapsed seconds elapsed)"
-    else
-      echo "  ."
     fi
     sleep "$INTERVAL"
   done
