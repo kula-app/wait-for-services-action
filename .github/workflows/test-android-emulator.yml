@@ -21,9 +21,18 @@ jobs:
           - 5555:5555
         options: >-
           --device /dev/kvm
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create Android Virtual Device
+        run: |
+          echo no | avdmanager create avd --name test --package "system-images;android-30;google_apis;x86_64" --force
+
+      - name: Start Android Emulator in Background
+        run: |
+          echo "Starting Android Emulator..."
+          emulator -avd test -no-audio -no-window -no-boot-anim -gpu swiftshader_indirect -accel on -memory 2048 -writable-system -port 5555 -verbose &
 
       - name: Wait for Android Emulator
         uses: ./
@@ -31,7 +40,7 @@ jobs:
           type: android-emulator
           host: android-emulator
           port: 5555
-          timeout: 300
+          timeout: 600
 
   test-timeout:
     name: Test Android Emulator - Timeout
