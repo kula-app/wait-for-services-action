@@ -1,6 +1,26 @@
-# Wait for Services
+# Wait for Services GitHub Action
 
-This action waits for a service to be ready.
+A GitHub Action to wait for various services to be ready before proceeding with workflow steps.
+
+## Code Structure
+
+The codebase has been refactored into a modular structure:
+
+```
+.
+├── entrypoint.sh             # Main entry point script
+└── src/
+    ├── services/             # Service-specific implementations
+    │   ├── android-emulator.sh  # Android emulator service checks
+    │   ├── kafka.sh          # Kafka service checks
+    │   ├── mongodb.sh        # MongoDB service checks
+    │   ├── nats.sh           # NATS service checks
+    │   ├── postgres.sh       # PostgreSQL service checks
+    │   └── redis.sh          # Redis service checks
+    └── utils/                # Shared utility functions
+        ├── common.sh         # Common utility functions
+        └── wait.sh           # Main waiting logic
+```
 
 ## Supported Services
 
@@ -10,6 +30,29 @@ This action waits for a service to be ready.
 - PostgreSQL
 - Redis
 - Android Emulator
+- Generic TCP service (fallback)
+
+## How to Add a New Service
+
+1. Create a new service file in `src/services/` directory
+2. Implement a `check_servicename()` function that returns 0 when service is ready
+3. Update the `wait_for_service()` function in `src/utils/wait.sh` to include your service
+4. Update the entrypoint.sh to source your new service file
+
+## Inputs
+
+- `type`: Service type (mongodb, nats, kafka, postgres, redis, android-emulator)
+- `host`: Host address of the service
+- `port`: Port number of the service
+- `timeout`: Maximum seconds to wait (default: 20)
+- `interval`: Seconds between checks (default: 1)
+- `wait_indefinitely`: Continue waiting without timeout (default: false)
+
+Additional service-specific inputs:
+- For PostgreSQL: `username`, `password`, `database`
+- For Redis: `password`
+
+See [action.yml](action.yml) for more details.
 
 ## Usage
 
@@ -81,18 +124,6 @@ This action waits for a service to be ready.
     host: redis
     port: 6379
 ```
-
-## Inputs
-
-- `type`: The type of service to wait for. Must be any of `mongodb`, `nats`, `kafka`, `postgres`, `redis`, or `android-emulator`. (Required)
-- `host`: The host of the service. (Required)
-- `port`: The port of the service. (Required)
-- `username`: The username for the service. (Optional)
-- `password`: The password for the service. (Optional)
-- `database`: The database name for PostgreSQL. (Optional)
-- `timeout`: The timeout for the service to be ready. (Optional, default: 20)
-- `interval`: The interval to check if the service is ready. (Optional, default: 1)
-- `wait-indefinitely`: If true, the action will wait indefinitely for the service to be ready. Make sure to set a workflow timeout if using this. (Optional, default: false)
 
 ## Outputs
 
