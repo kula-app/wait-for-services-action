@@ -100,6 +100,7 @@ RUN set -x && \
 
 # Prepare entrypoint script
 COPY entrypoint.sh /entrypoint.sh
+COPY src/ /src/
 RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
