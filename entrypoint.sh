@@ -189,6 +189,21 @@ wait_for_service() {
         echo "::endgroup::"
         return 1
       fi
+      echo " - ADB connection successful!"
+
+      echo " - Checking Android emulator boot status..."
+      if [ "$boot_status" != "1" ]; then
+        echo " - Android emulator is not fully booted yet, status: $boot_status"
+        return 2
+      fi
+      echo " - ✓ Android emulator is fully booted and ready!"
+
+      echo " - Device info:"
+      adb -s "$adb_device" shell getprop ro.product.model
+      adb -s "$adb_device" shell getprop ro.build.version.release
+
+      echo "::endgroup::"
+      return 0
       ;;
 
     *)

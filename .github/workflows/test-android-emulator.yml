@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       android-emulator:
-        image: mingc/android-build-box:1.29.0
+        image: us-docker.pkg.dev/android-emulator-268719/images/30-google-x64-no-metrics:30.1.2
         ports:
           - 5555:5555
         options: >-
