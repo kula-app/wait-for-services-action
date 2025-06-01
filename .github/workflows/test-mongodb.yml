@@ -21,6 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
+
       - name: Wait for MongoDB
         uses: ./
         with:
@@ -35,6 +39,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
 
       - name: Wait for MongoDB
         id: wait-for-mongodb
