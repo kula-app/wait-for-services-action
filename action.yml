@@ -38,7 +38,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'ghcr.io/${{ github.repository }}:latest'
   env:
     INPUT_TYPE: ${{ inputs.type }}
     INPUT_HOST: ${{ inputs.host }}
