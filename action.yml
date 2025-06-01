@@ -38,7 +38,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'Dockerfile'
+  image: 'ghcr.io/kula-app/wait-for-services-action:latest'
   env:
     INPUT_TYPE: ${{ inputs.type }}
     INPUT_HOST: ${{ inputs.host }}

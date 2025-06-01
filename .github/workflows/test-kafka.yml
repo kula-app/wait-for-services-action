@@ -41,6 +41,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
+
       - name: Wait for Kafka
         uses: ./
         with:
@@ -55,6 +59,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
 
       - name: Wait for Kafka
         id: wait-for-kafka

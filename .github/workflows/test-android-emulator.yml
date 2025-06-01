@@ -25,6 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
+
       - name: Wait for Android Emulator
         uses: ./
         with:
@@ -39,6 +43,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
 
       - name: Wait for Android Emulator
         id: wait-for-android-emulator
