@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       redis:
-        image: redis:7.4.3
+        image: redis:8.2.0
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
