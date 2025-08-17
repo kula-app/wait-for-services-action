@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       nats:
-        image: nats:2.11.3
+        image: nats:2.11.8
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
