@@ -28,7 +28,7 @@ A robust GitHub Action that ensures your services are ready before proceeding wi
 
 ```yaml
 - name: Wait for PostgreSQL
-  uses: kula-app/wait-for-services@main
+  uses: kula-app/wait-for-services-action@v1
   with:
     type: postgres
     host: localhost
@@ -43,7 +43,7 @@ A robust GitHub Action that ensures your services are ready before proceeding wi
 #### MongoDB
 ```yaml
 - name: Wait for MongoDB
-  uses: kula-app/wait-for-services@main
+  uses: kula-app/wait-for-services-action@v1
   with:
     type: mongodb
     host: mongodb
@@ -53,7 +53,7 @@ A robust GitHub Action that ensures your services are ready before proceeding wi
 #### NATS
 ```yaml
 - name: Wait for NATS
-  uses: kula-app/wait-for-services@main
+  uses: kula-app/wait-for-services-action@v1
   with:
     type: nats
     host: nats
@@ -63,7 +63,7 @@ A robust GitHub Action that ensures your services are ready before proceeding wi
 #### Kafka
 ```yaml
 - name: Wait for Kafka
-  uses: kula-app/wait-for-services@main
+  uses: kula-app/wait-for-services-action@v1
   with:
     type: kafka
     host: kafka
@@ -73,7 +73,7 @@ A robust GitHub Action that ensures your services are ready before proceeding wi
 #### Redis
 ```yaml
 - name: Wait for Redis
-  uses: kula-app/wait-for-services@main
+  uses: kula-app/wait-for-services-action@v1
   with:
     type: redis
     host: redis
@@ -83,7 +83,7 @@ A robust GitHub Action that ensures your services are ready before proceeding wi
 #### Android Emulator
 ```yaml
 - name: Wait for Android Emulator
-  uses: kula-app/wait-for-services@main
+  uses: kula-app/wait-for-services-action@v1
   with:
     type: android-emulator
     host: phone
