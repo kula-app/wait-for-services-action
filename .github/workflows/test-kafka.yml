@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       kafka:
-        image: apache/kafka:4.0.0
+        image: apache/kafka:4.1.0
         env:
           # Enable KRaft mode
           KAFKA_PROCESS_ROLES: broker,controller
