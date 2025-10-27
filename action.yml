@@ -37,15 +37,33 @@ inputs:
     default: 'false'
 
 runs:
-  using: 'docker'
-  image: 'docker://ghcr.io/kula-app/wait-for-services-action:latest'
-  env:
-    INPUT_TYPE: ${{ inputs.type }}
-    INPUT_HOST: ${{ inputs.host }}
-    INPUT_PORT: ${{ inputs.port }}
-    INPUT_USERNAME: ${{ inputs.username }}
-    INPUT_PASSWORD: ${{ inputs.password }}
-    INPUT_DATABASE: ${{ inputs.database }}
-    INPUT_TIMEOUT: ${{ inputs.timeout }}
-    INPUT_INTERVAL: ${{ inputs.interval }}
-    INPUT_WAIT_INDEFINITELY: ${{ inputs.wait-indefinitely }}
+  using: 'composite'
+  steps:
+    - name: Pull Docker image
+      shell: sh
+      run: docker pull ghcr.io/kula-app/wait-for-services-action:latest
+    
+    - name: Wait for service
+      shell: sh
+      env:
+        INPUT_TYPE: ${{ inputs.type }}
+        INPUT_HOST: ${{ inputs.host }}
+        INPUT_PORT: ${{ inputs.port }}
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_PASSWORD: ${{ inputs.password }}
+        INPUT_DATABASE: ${{ inputs.database }}
+        INPUT_TIMEOUT: ${{ inputs.timeout }}
+        INPUT_INTERVAL: ${{ inputs.interval }}
+        INPUT_WAIT_INDEFINITELY: ${{ inputs.wait-indefinitely }}
+      run: |
+        docker run --rm --network host \
+          -e INPUT_TYPE="$INPUT_TYPE" \
+          -e INPUT_HOST="$INPUT_HOST" \
+          -e INPUT_PORT="$INPUT_PORT" \
+          -e INPUT_USERNAME="$INPUT_USERNAME" \
+          -e INPUT_PASSWORD="$INPUT_PASSWORD" \
+          -e INPUT_DATABASE="$INPUT_DATABASE" \
+          -e INPUT_TIMEOUT="$INPUT_TIMEOUT" \
+          -e INPUT_INTERVAL="$INPUT_INTERVAL" \
+          -e INPUT_WAIT_INDEFINITELY="$INPUT_WAIT_INDEFINITELY" \
+          ghcr.io/kula-app/wait-for-services-action:latest
