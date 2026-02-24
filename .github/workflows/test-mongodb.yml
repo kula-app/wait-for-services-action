@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test MongoDB
+    name: Test MongoDB (Docker)
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -29,6 +29,23 @@ jobs:
         uses: ./
         with:
           type: mongodb
+          host: mongodb
+          port: 27017
+          timeout: 300
+
+  test-sub-action:
+    name: Test MongoDB (Node)
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:8.0.15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for MongoDB
+        uses: ./mongodb
+        with:
           host: mongodb
           port: 27017
           timeout: 300

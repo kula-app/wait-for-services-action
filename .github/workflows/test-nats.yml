@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test NATS
+    name: Test NATS (Docker)
     runs-on: ubuntu-latest
     services:
       nats:
@@ -29,6 +29,23 @@ jobs:
         uses: ./
         with:
           type: nats
+          host: nats
+          port: 4222
+          timeout: 300
+
+  test-sub-action:
+    name: Test NATS (Node)
+    runs-on: ubuntu-latest
+    services:
+      nats:
+        image: nats:2.12.1
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for NATS
+        uses: ./nats
+        with:
           host: nats
           port: 4222
           timeout: 300

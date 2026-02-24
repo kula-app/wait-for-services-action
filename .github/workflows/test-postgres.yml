@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test:
-    name: Test PostgreSQL
+    name: Test PostgreSQL (Docker)
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -35,6 +35,32 @@ jobs:
         uses: ./
         with:
           type: postgres
+          host: postgres
+          port: 5432
+          username: postgres
+          password: postgres
+          database: testdb
+          timeout: 300
+
+  test-sub-action:
+    name: Test PostgreSQL (Node)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for PostgreSQL
+        uses: ./postgres
+        with:
           host: postgres
           port: 5432
           username: postgres

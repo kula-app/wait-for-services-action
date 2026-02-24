@@ -1,0 +1,40 @@
+name: 'Wait for PostgreSQL'
+description: 'Wait for a PostgreSQL instance to be ready using native client connection'
+author: 'kula.app'
+
+branding:
+  icon: 'clock'
+  color: 'blue'
+
+inputs:
+  host:
+    description: 'The host of the PostgreSQL service'
+    required: true
+  port:
+    description: 'The port of the PostgreSQL service'
+    required: true
+  username:
+    description: 'The username for the PostgreSQL service'
+    required: false
+  password:
+    description: 'The password for the PostgreSQL service'
+    required: false
+  database:
+    description: 'The database name for the PostgreSQL service'
+    required: false
+  timeout:
+    description: 'The timeout in seconds for the service to be ready'
+    required: false
+    default: '20'
+  interval:
+    description: 'The interval in seconds to check if the service is ready'
+    required: false
+    default: '1'
+  wait-indefinitely:
+    description: 'If true, the action will wait indefinitely for the service to be ready'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
