@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test Kafka (Docker)
+  universal-reachable:
+    name: Test Kafka (Universal, Reachable)
     runs-on: ubuntu-latest
     services:
       kafka:
@@ -49,8 +49,33 @@ jobs:
           port: 9092
           timeout: 300
 
-  test-sub-action:
-    name: Test Kafka (Node)
+  universal-timeout:
+    name: Test Kafka (Universal, Timeout)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
+
+      - name: Wait for Kafka
+        id: wait-for-kafka
+        uses: ./
+        continue-on-error: true
+        with:
+          type: kafka
+          host: kafka
+          port: 9092
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-kafka.outcome != 'failure'
+        run: exit 1
+
+  dedicated-reachable:
+    name: Test Kafka (Dedicated, Reachable)
     runs-on: ubuntu-latest
     services:
       kafka:
@@ -79,25 +104,20 @@ jobs:
           port: 9094
           timeout: 300
 
-  test-timeout:
-    name: Test Kafka - Timeout
+  dedicated-timeout:
+    name: Test Kafka (Dedicated, Timeout)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
 
-      - name: Patch action.yml
-        run: |
-          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
-
       - name: Wait for Kafka
         id: wait-for-kafka
-        uses: ./
+        uses: ./kafka
         continue-on-error: true
         with:
-          type: kafka
-          host: kafka
-          port: 9092
+          host: localhost
+          port: 9094
           timeout: 30
 
       - name: Fail if wait succeeded unexpectedly

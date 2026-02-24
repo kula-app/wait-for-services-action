@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test PostgreSQL (Docker)
+  universal-reachable:
+    name: Test PostgreSQL (Universal, Reachable)
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -42,8 +42,36 @@ jobs:
           database: testdb
           timeout: 300
 
-  test-sub-action:
-    name: Test PostgreSQL (Node)
+  universal-timeout:
+    name: Test PostgreSQL (Universal, Timeout)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
+
+      - name: Wait for PostgreSQL
+        id: wait-for-postgres
+        uses: ./
+        continue-on-error: true
+        with:
+          type: postgres
+          host: nonexistent-host
+          port: 5432
+          username: postgres
+          password: postgres
+          database: testdb
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-postgres.outcome != 'failure'
+        run: exit 1
+
+  dedicated-reachable:
+    name: Test PostgreSQL (Dedicated, Reachable)
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -68,24 +96,19 @@ jobs:
           database: testdb
           timeout: 300
 
-  test-timeout:
-    name: Test PostgreSQL - Timeout
+  dedicated-timeout:
+    name: Test PostgreSQL (Dedicated, Timeout)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
 
-      - name: Patch action.yml
-        run: |
-          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
-
       - name: Wait for PostgreSQL
         id: wait-for-postgres
-        uses: ./
+        uses: ./postgres
         continue-on-error: true
         with:
-          type: postgres
-          host: nonexistent-host
+          host: localhost
           port: 5432
           username: postgres
           password: postgres
