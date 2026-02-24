@@ -35,7 +35,7 @@ jobs:
           KAFKA_NUM_PARTITIONS: '2'
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Patch action.yml
         run: |
@@ -54,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Patch action.yml
         run: |
@@ -95,7 +95,7 @@ jobs:
           - 9094:9094
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Wait for Kafka
         uses: ./kafka
@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Wait for Kafka
         id: wait-for-kafka
