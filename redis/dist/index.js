@@ -35467,7 +35467,7 @@ async function checkRedis(inputs) {
         }
     }
     finally {
-        redis.disconnect();
+        await redis.disconnect();
     }
 }
 

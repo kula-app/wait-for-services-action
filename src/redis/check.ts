@@ -19,6 +19,6 @@ export async function checkRedis(inputs: ServiceCheckInputs): Promise<void> {
       throw new Error(`Redis PING returned unexpected response: ${result}`);
     }
   } finally {
-    redis.disconnect();
+    await redis.disconnect();
   }
 }
