@@ -14,11 +14,11 @@ export function parseInputs(): ServiceCheckInputs {
   if (isNaN(port)) {
     throw new Error(`Invalid port value: ${core.getInput('port')}`);
   }
-  if (isNaN(timeout)) {
-    throw new Error(`Invalid timeout value: ${core.getInput('timeout')}`);
+  if (isNaN(timeout) || timeout <= 0) {
+    throw new Error(`Invalid timeout value: ${core.getInput('timeout')}. Must be a positive number.`);
   }
-  if (isNaN(interval)) {
-    throw new Error(`Invalid interval value: ${core.getInput('interval')}`);
+  if (isNaN(interval) || interval <= 0) {
+    throw new Error(`Invalid interval value: ${core.getInput('interval')}. Must be a positive number.`);
   }
 
   return { host, port, timeout, interval, waitIndefinitely, username, password, database };

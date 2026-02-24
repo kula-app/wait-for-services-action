@@ -116,4 +116,40 @@ describe('parseInputs', () => {
 
     expect(() => parseInputs()).toThrow('Invalid timeout value');
   });
+
+  it('should throw on zero timeout', () => {
+    mockedCore.getInput.mockImplementation((name: string) => {
+      switch (name) {
+        case 'host':
+          return 'localhost';
+        case 'port':
+          return '5432';
+        case 'timeout':
+          return '0';
+        default:
+          return '';
+      }
+    });
+
+    expect(() => parseInputs()).toThrow('Invalid timeout value');
+  });
+
+  it('should throw on negative interval', () => {
+    mockedCore.getInput.mockImplementation((name: string) => {
+      switch (name) {
+        case 'host':
+          return 'localhost';
+        case 'port':
+          return '5432';
+        case 'timeout':
+          return '30';
+        case 'interval':
+          return '-1';
+        default:
+          return '';
+      }
+    });
+
+    expect(() => parseInputs()).toThrow('Invalid interval value');
+  });
 });
