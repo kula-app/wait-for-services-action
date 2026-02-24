@@ -1,0 +1,31 @@
+name: 'Wait for NATS'
+description: 'Wait for a NATS server to be ready using native client connect and flush'
+author: 'kula.app'
+
+branding:
+  icon: 'clock'
+  color: 'blue'
+
+inputs:
+  host:
+    description: 'The host of the NATS service'
+    required: true
+  port:
+    description: 'The port of the NATS service'
+    required: true
+  timeout:
+    description: 'The timeout in seconds for the service to be ready'
+    required: false
+    default: '20'
+  interval:
+    description: 'The interval in seconds to check if the service is ready'
+    required: false
+    default: '1'
+  wait-indefinitely:
+    description: 'If true, the action will wait indefinitely for the service to be ready'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

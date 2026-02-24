@@ -113,7 +113,9 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+
+# TypeScript build output (but NOT sub-action dist/ directories which are committed)
+lib/
 
 # Gatsby files
 .cache/

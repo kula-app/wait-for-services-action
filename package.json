@@ -1,7 +1,47 @@
 {
   "name": "@kula.app/wait-for-services-action",
-  "packageManager": "yarn@4.10.3",
+  "version": "1.0.0",
+  "description": "GitHub Action sub-actions to wait for various services to be ready",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "all": "yarn format && yarn lint && yarn test && yarn build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kula-app/wait-for-services-action.git"
+  },
+  "keywords": [
+    "actions",
+    "services",
+    "wait",
+    "health-check"
+  ],
+  "author": "kula.app",
+  "license": "MIT",
+  "packageManager": "yarn@4.12.0",
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "ioredis": "^5.6.1",
+    "kafkajs": "^2.2.4",
+    "mongodb": "^6.16.0",
+    "nats": "^2.29.3",
+    "pg": "^8.16.0"
+  },
   "devDependencies": {
-    "prettier": "^3.5.3"
+    "@types/node": "^22.13.4",
+    "@types/pg": "^8.11.13",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
+    "@typescript-eslint/parser": "^8.24.0",
+    "@vercel/ncc": "^0.38.3",
+    "eslint": "^9.20.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.7.3",
+    "vitest": "^4.0.0"
   }
 }

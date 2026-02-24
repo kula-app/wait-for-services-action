@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test NATS
+  universal-reachable:
+    name: Test NATS (Universal, Reachable)
     runs-on: ubuntu-latest
     services:
       nats:
@@ -33,8 +33,8 @@ jobs:
           port: 4222
           timeout: 300
 
-  test-timeout:
-    name: Test NATS - Timeout
+  universal-timeout:
+    name: Test NATS (Universal, Timeout)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -51,6 +51,45 @@ jobs:
         with:
           type: nats
           host: nats
+          port: 4222
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-nats.outcome != 'failure'
+        run: exit 1
+
+  dedicated-reachable:
+    name: Test NATS (Dedicated, Reachable)
+    runs-on: ubuntu-latest
+    services:
+      nats:
+        image: nats:2.12.1
+        ports:
+          - 4222:4222
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for NATS
+        uses: ./nats
+        with:
+          host: localhost
+          port: 4222
+          timeout: 300
+
+  dedicated-timeout:
+    name: Test NATS (Dedicated, Timeout)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for NATS
+        id: wait-for-nats
+        uses: ./nats
+        continue-on-error: true
+        with:
+          host: localhost
           port: 4222
           timeout: 30
 

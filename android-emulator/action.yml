@@ -1,0 +1,37 @@
+name: 'Wait for Android Emulator'
+description: 'Wait for an Android emulator to be fully booted via ADB'
+author: 'kula.app'
+
+branding:
+  icon: 'clock'
+  color: 'blue'
+
+inputs:
+  host:
+    description: 'The host of the Android emulator'
+    required: true
+  port:
+    description: 'The ADB port of the Android emulator'
+    required: true
+  timeout:
+    description: 'The timeout in seconds for the emulator to be ready'
+    required: false
+    default: '20'
+  interval:
+    description: 'The interval in seconds to check if the emulator is ready'
+    required: false
+    default: '1'
+  wait-indefinitely:
+    description: 'If true, the action will wait indefinitely for the emulator to be ready'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    INPUT_HOST: ${{ inputs.host }}
+    INPUT_PORT: ${{ inputs.port }}
+    INPUT_TIMEOUT: ${{ inputs.timeout }}
+    INPUT_INTERVAL: ${{ inputs.interval }}
+    INPUT_WAIT_INDEFINITELY: ${{ inputs.wait-indefinitely }}

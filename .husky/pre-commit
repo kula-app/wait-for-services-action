@@ -1,0 +1,3 @@
+yarn format
+yarn build
+git add tcp/dist mongodb/dist redis/dist nats/dist kafka/dist postgres/dist 2>/dev/null || true

@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test MongoDB
+  universal-reachable:
+    name: Test MongoDB (Universal, Reachable)
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -33,8 +33,8 @@ jobs:
           port: 27017
           timeout: 300
 
-  test-timeout:
-    name: Test MongoDB - Timeout
+  universal-timeout:
+    name: Test MongoDB (Universal, Timeout)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -51,6 +51,45 @@ jobs:
         with:
           type: mongodb
           host: mongodb
+          port: 27017
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-mongodb.outcome != 'failure'
+        run: exit 1
+
+  dedicated-reachable:
+    name: Test MongoDB (Dedicated, Reachable)
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:8.0.15
+        ports:
+          - 27017:27017
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for MongoDB
+        uses: ./mongodb
+        with:
+          host: localhost
+          port: 27017
+          timeout: 300
+
+  dedicated-timeout:
+    name: Test MongoDB (Dedicated, Timeout)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for MongoDB
+        id: wait-for-mongodb
+        uses: ./mongodb
+        continue-on-error: true
+        with:
+          host: localhost
           port: 27017
           timeout: 30
 

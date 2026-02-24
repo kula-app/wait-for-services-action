@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test Android Emulator
+  universal-reachable:
+    name: Test Android Emulator (Universal, Reachable)
     runs-on: ubuntu-latest
     services:
       android-emulator:
@@ -37,8 +37,8 @@ jobs:
           port: 5555
           timeout: 300
 
-  test-timeout:
-    name: Test Android Emulator - Timeout
+  universal-timeout:
+    name: Test Android Emulator (Universal, Timeout)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -54,6 +54,47 @@ jobs:
         continue-on-error: true
         with:
           type: android-emulator
+          host: android-emulator
+          port: 5555
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-android-emulator.outcome != 'failure'
+        run: exit 1
+
+  dedicated-reachable:
+    name: Test Android Emulator (Dedicated, Reachable)
+    runs-on: ubuntu-latest
+    services:
+      android-emulator:
+        image: us-docker.pkg.dev/android-emulator-268719/images/30-google-x64-no-metrics:30.3.4
+        ports:
+          - 5555:5555
+        options: >-
+          --device /dev/kvm
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for Android Emulator
+        uses: ./android-emulator
+        with:
+          host: android-emulator
+          port: 5555
+          timeout: 300
+
+  dedicated-timeout:
+    name: Test Android Emulator (Dedicated, Timeout)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for Android Emulator
+        id: wait-for-android-emulator
+        uses: ./android-emulator
+        continue-on-error: true
+        with:
           host: android-emulator
           port: 5555
           timeout: 30

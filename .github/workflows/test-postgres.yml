@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test PostgreSQL
+  universal-reachable:
+    name: Test PostgreSQL (Universal, Reachable)
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -42,8 +42,8 @@ jobs:
           database: testdb
           timeout: 300
 
-  test-timeout:
-    name: Test PostgreSQL - Timeout
+  universal-timeout:
+    name: Test PostgreSQL (Universal, Timeout)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -60,6 +60,55 @@ jobs:
         with:
           type: postgres
           host: nonexistent-host
+          port: 5432
+          username: postgres
+          password: postgres
+          database: testdb
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-postgres.outcome != 'failure'
+        run: exit 1
+
+  dedicated-reachable:
+    name: Test PostgreSQL (Dedicated, Reachable)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for PostgreSQL
+        uses: ./postgres
+        with:
+          host: localhost
+          port: 5432
+          username: postgres
+          password: postgres
+          database: testdb
+          timeout: 300
+
+  dedicated-timeout:
+    name: Test PostgreSQL (Dedicated, Timeout)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Wait for PostgreSQL
+        id: wait-for-postgres
+        uses: ./postgres
+        continue-on-error: true
+        with:
+          host: localhost
           port: 5432
           username: postgres
           password: postgres
