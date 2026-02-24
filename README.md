@@ -10,15 +10,15 @@ A robust GitHub Action that ensures your services are ready before proceeding wi
 
 In addition to the root Docker-based action, this repository provides **per-service sub-actions** that run as Node.js or composite actions. These are lightweight alternatives that don't require Docker on the runner.
 
-| Sub-Action                              | Type             | Check Method                  |
-| --------------------------------------- | ---------------- | ----------------------------- |
-| [`mongodb`](mongodb/)                   | Node20           | Native driver ping            |
-| [`redis`](redis/)                       | Node20           | Native driver PING/PONG       |
-| [`nats`](nats/)                         | Node20           | Native client connect + flush |
-| [`kafka`](kafka/)                       | Node20           | Admin client topic listing    |
-| [`postgres`](postgres/)                 | Node20           | Native client query           |
-| [`tcp`](tcp/)                           | Node20           | TCP port reachability         |
-| [`android-emulator`](android-emulator/) | Docker           | ADB boot status               |
+| Sub-Action                              | Type   | Check Method                  |
+| --------------------------------------- | ------ | ----------------------------- |
+| [`mongodb`](mongodb/)                   | Node20 | Native driver ping            |
+| [`redis`](redis/)                       | Node20 | Native driver PING/PONG       |
+| [`nats`](nats/)                         | Node20 | Native client connect + flush |
+| [`kafka`](kafka/)                       | Node20 | Admin client topic listing    |
+| [`postgres`](postgres/)                 | Node20 | Native client query           |
+| [`tcp`](tcp/)                           | Node20 | TCP port reachability         |
+| [`android-emulator`](android-emulator/) | Docker | ADB boot status               |
 
 ## Usage
 
