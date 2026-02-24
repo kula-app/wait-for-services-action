@@ -39,6 +39,8 @@ jobs:
     services:
       nats:
         image: nats:2.12.1
+        ports:
+          - 4222:4222
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
@@ -46,7 +48,7 @@ jobs:
       - name: Wait for NATS
         uses: ./nats
         with:
-          host: nats
+          host: localhost
           port: 4222
           timeout: 300
 

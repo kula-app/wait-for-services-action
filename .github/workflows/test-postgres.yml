@@ -61,7 +61,7 @@ jobs:
       - name: Wait for PostgreSQL
         uses: ./postgres
         with:
-          host: postgres
+          host: localhost
           port: 5432
           username: postgres
           password: postgres

@@ -39,6 +39,8 @@ jobs:
     services:
       redis:
         image: redis:8.2.1
+        ports:
+          - 6379:6379
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
@@ -46,7 +48,7 @@ jobs:
       - name: Wait for Redis
         uses: ./redis
         with:
-          host: redis
+          host: localhost
           port: 6379
           timeout: 300
 
