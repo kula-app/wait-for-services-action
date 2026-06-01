@@ -19,6 +19,7 @@ In addition to the root Docker-based action, this repository provides **per-serv
 | [`postgres`](postgres/)                 | Node20 | Native client query           |
 | [`tcp`](tcp/)                           | Node20 | TCP port reachability         |
 | [`android-emulator`](android-emulator/) | Docker | ADB boot status               |
+| [`ios-simulator`](ios-simulator/)       | Shell  | simctl + xcodebuild readiness |
 
 ## Usage
 
@@ -119,6 +120,46 @@ Sub-actions run inline in the workflow and don't require Docker on the runner.
     timeout: 300
 ```
 
+#### iOS Simulator
+
+Waits for Apple simulator infrastructure to be ready. Requires a macOS runner with Xcode.
+
+```yaml
+- name: Wait for iOS Simulator
+  uses: kula-app/wait-for-services-action/ios-simulator@v1
+  with:
+    platform: iOS
+    device: iPhone 17 Pro Max
+    boot: true
+    warm-xcodebuild-settings: true
+    project: MyApp.xcodeproj
+    scheme: MyAppUITests
+    timeout: 300
+```
+
+**Inputs:**
+
+| Input                      | Required | Default | Description                                                                    |
+| -------------------------- | -------- | ------- | ------------------------------------------------------------------------------ |
+| `platform`                 | No       | `iOS`   | Simulator platform (`iOS`, `tvOS`, `visionOS`)                                 |
+| `os-version`               | No       | latest  | Runtime version (e.g. `26.4`); auto-selects highest if omitted                 |
+| `device`                   | Yes      | -       | Simulator device name (e.g. `iPhone 17 Pro Max`)                               |
+| `boot`                     | No       | `true`  | Boot the simulator and wait for bootstatus                                     |
+| `warm-xcodebuild-settings` | No       | `false` | Run `xcodebuild -showBuildSettings` after readiness                            |
+| `project`                  | No       | -       | Xcode project path (required with warmup)                                      |
+| `workspace`                | No       | -       | Xcode workspace path (required with warmup, mutually exclusive with `project`) |
+| `scheme`                   | No       | -       | Xcode scheme (required with warmup)                                            |
+| `destination`              | No       | -       | Explicit xcodebuild destination; auto-derived from UDID                        |
+| `timeout`                  | No       | `300`   | Overall timeout in seconds                                                     |
+| `interval`                 | No       | `5`     | Polling interval in seconds                                                    |
+
+**Outputs:**
+
+| Output    | Description              |
+| --------- | ------------------------ |
+| `udid`    | Resolved simulator UDID  |
+| `runtime` | Resolved runtime version |
+
 ## Inputs
 
 ### Root Action
@@ -152,6 +193,7 @@ This action does not produce any outputs. It will:
 - **Node sub-actions**: Works on any runner with Node.js 20+
 - **TCP sub-action**: Works on any runner with `nc` (netcat)
 - **Android emulator sub-action**: Requires Docker
+- **iOS simulator sub-action**: Requires macOS runner with Xcode and `jq`
 
 ## Development
 
