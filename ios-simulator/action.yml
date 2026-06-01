@@ -1,0 +1,74 @@
+name: 'Wait for iOS Simulator'
+description: 'Wait for Apple simulator infrastructure to be ready before iOS test workflows run'
+author: 'kula.app'
+branding:
+  icon: 'clock'
+  color: 'blue'
+
+inputs:
+  platform:
+    description: 'Simulator platform, e.g. iOS, tvOS, visionOS'
+    required: false
+    default: 'iOS'
+  os-version:
+    description: 'Simulator runtime version, e.g. 26.4'
+    required: false
+  device:
+    description: 'Simulator device name, e.g. iPhone 17 Pro Max'
+    required: true
+  boot:
+    description: 'Boot the simulator and wait for bootstatus'
+    required: false
+    default: 'true'
+  warm-xcodebuild-settings:
+    description: 'Run xcodebuild -showBuildSettings after simulator readiness'
+    required: false
+    default: 'false'
+  project:
+    description: 'Xcode project path for build-settings warmup'
+    required: false
+  workspace:
+    description: 'Xcode workspace path for build-settings warmup'
+    required: false
+  scheme:
+    description: 'Xcode scheme for build-settings warmup'
+    required: false
+  destination:
+    description: 'Explicit xcodebuild destination; defaults to platform/name derived from resolved UDID'
+    required: false
+  timeout:
+    description: 'Overall timeout in seconds'
+    required: false
+    default: '300'
+  interval:
+    description: 'Polling interval in seconds'
+    required: false
+    default: '5'
+
+outputs:
+  udid:
+    description: 'Resolved simulator UDID'
+    value: ${{ steps.wait.outputs.udid }}
+  runtime:
+    description: 'Resolved runtime identifier or version'
+    value: ${{ steps.wait.outputs.runtime }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Wait for iOS Simulator
+      id: wait
+      shell: bash
+      env:
+        INPUT_PLATFORM: ${{ inputs.platform }}
+        INPUT_OS_VERSION: ${{ inputs.os-version }}
+        INPUT_DEVICE: ${{ inputs.device }}
+        INPUT_BOOT: ${{ inputs.boot }}
+        INPUT_WARM_XCODEBUILD_SETTINGS: ${{ inputs.warm-xcodebuild-settings }}
+        INPUT_PROJECT: ${{ inputs.project }}
+        INPUT_WORKSPACE: ${{ inputs.workspace }}
+        INPUT_SCHEME: ${{ inputs.scheme }}
+        INPUT_DESTINATION: ${{ inputs.destination }}
+        INPUT_TIMEOUT: ${{ inputs.timeout }}
+        INPUT_INTERVAL: ${{ inputs.interval }}
+      run: bash "${{ github.action_path }}/wait-ios-simulator.sh"

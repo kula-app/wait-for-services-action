@@ -1,0 +1,95 @@
+name: Test iOS Simulator
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  boot:
+    name: Test iOS Simulator (Boot)
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Wait for iOS Simulator
+        id: wait
+        uses: ./ios-simulator
+        with:
+          platform: iOS
+          device: iPhone 17 Pro
+          boot: true
+          timeout: 300
+
+      - name: Verify outputs
+        run: |
+          if [ -z "${{ steps.wait.outputs.udid }}" ]; then
+            echo "::error::Missing udid output"
+            exit 1
+          fi
+          if [ -z "${{ steps.wait.outputs.runtime }}" ]; then
+            echo "::error::Missing runtime output"
+            exit 1
+          fi
+          echo "UDID: ${{ steps.wait.outputs.udid }}"
+          echo "Runtime: ${{ steps.wait.outputs.runtime }}"
+
+      - name: Verify simulator is booted
+        run: |
+          STATE=$(xcrun simctl list devices -j | jq -r --arg udid "${{ steps.wait.outputs.udid }}" '
+            [.devices[][] | select(.udid == $udid)] | first | .state
+          ')
+          if [ "$STATE" != "Booted" ]; then
+            echo "::error::Simulator state is '$STATE', expected 'Booted'"
+            exit 1
+          fi
+
+  no-boot:
+    name: Test iOS Simulator (No Boot)
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Wait for iOS Simulator
+        id: wait
+        uses: ./ios-simulator
+        with:
+          platform: iOS
+          device: iPhone 17 Pro
+          boot: false
+          timeout: 300
+
+      - name: Verify outputs
+        run: |
+          if [ -z "${{ steps.wait.outputs.udid }}" ]; then
+            echo "::error::Missing udid output"
+            exit 1
+          fi
+
+  invalid-device:
+    name: Test iOS Simulator (Invalid Device)
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Wait for iOS Simulator
+        id: wait
+        uses: ./ios-simulator
+        continue-on-error: true
+        with:
+          platform: iOS
+          device: Nonexistent Device 999
+          boot: false
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait.outcome != 'failure'
+        run: exit 1
