@@ -153,7 +153,7 @@ resolve_runtime() {
             or ($p == "xrOS" and .platform == "visionOS")
           )
         | select(.version == $v or (.version | startswith($v + ".")))
-      ] | sort_by(.version) | last // empty
+      ] | sort_by(.version | split(".") | map(tonumber)) | last // empty
     ')
 
     if [ -z "$runtime" ] || [ "$runtime" = "null" ]; then
@@ -172,7 +172,7 @@ resolve_runtime() {
             or ($p == "visionOS" and .platform == "xrOS")
             or ($p == "xrOS" and .platform == "visionOS")
           )
-      ] | sort_by(.version) | last // empty
+      ] | sort_by(.version | split(".") | map(tonumber)) | last // empty
     ')
 
     if [ -z "$runtime" ] || [ "$runtime" = "null" ]; then
