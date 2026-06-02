@@ -322,18 +322,22 @@ warm_xcodebuild_settings() {
 
   log_info "Running: ${cmd[*]}"
 
-  local count=0
-  local max_attempts=$(( TIMEOUT / INTERVAL ))
-  [ "$max_attempts" -lt 1 ] && max_attempts=1
+  local attempt=0
+  local deadline=$(( SECONDS + TIMEOUT ))
+  local per_attempt_timeout=$(( TIMEOUT < 60 ? TIMEOUT : 60 ))
 
-  while [ "$count" -lt "$max_attempts" ]; do
-    if run_with_timeout 60 "${cmd[@]}" >/dev/null 2>&1; then
-      log_info "xcodebuild -showBuildSettings completed after $((count + 1)) attempt(s)"
+  while [ "$SECONDS" -lt "$deadline" ]; do
+    local remaining=$(( deadline - SECONDS ))
+    [ "$remaining" -lt 1 ] && break
+    local this_timeout=$(( remaining < per_attempt_timeout ? remaining : per_attempt_timeout ))
+
+    if run_with_timeout "$this_timeout" "${cmd[@]}" >/dev/null 2>&1; then
+      log_info "xcodebuild -showBuildSettings completed after $((attempt + 1)) attempt(s)"
       end_group
       return 0
     fi
-    count=$((count + 1))
-    log_info "Attempt $count failed, retrying in ${INTERVAL}s..."
+    attempt=$((attempt + 1))
+    log_info "Attempt $attempt failed, retrying in ${INTERVAL}s..."
     sleep "$INTERVAL"
   done
 
