@@ -389,7 +389,7 @@ if [ "$BOOT" = "true" ]; then
 fi
 
 if [ "$WARM_XCODEBUILD_SETTINGS" = "true" ]; then
-  warm_xcodebuild_settings
+  warm_xcodebuild_settings || true
 fi
 
 set_output "udid" "$RESOLVED_UDID"
