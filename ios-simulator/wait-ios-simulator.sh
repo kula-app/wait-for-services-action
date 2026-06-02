@@ -363,6 +363,7 @@ if ! resolve_runtime; then
     log_error "Runtime not available for ${PLATFORM} ${OS_VERSION:-<latest>}"
     log_error "Available runtimes:"
     list_available_runtimes | while IFS= read -r line; do log_error "$line"; done
+    end_group
     exit 1
   fi
 fi
@@ -376,6 +377,7 @@ if ! resolve_device; then
   log_error "Device '${DEVICE}' not found for runtime ${RESOLVED_RUNTIME_ID}"
   log_error "Available devices for this runtime:"
   list_available_devices | while IFS= read -r line; do log_error "$line"; done
+  end_group
   exit 1
 fi
 
