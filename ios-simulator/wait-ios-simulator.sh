@@ -239,7 +239,7 @@ attempt_runtime_reload() {
   done
 
   log_info "Restarting CoreSimulator services..."
-  sudo launchctl kill -9 system/com.apple.CoreSimulator.simdiskimaged 2>/dev/null || true
+  sudo launchctl kill SIGKILL system/com.apple.CoreSimulator.simdiskimaged 2>/dev/null || true
   sudo pkill -9 com.apple.CoreSimulator.CoreSimulatorService 2>/dev/null || true
 
   log_info "Waiting for runtime to become available..."
