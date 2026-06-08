@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Full semver version to release (e.g. 1.3.0). The v1 and v1.3 tags are moved to match."
+        description: 'Full semver version to release (e.g. 1.3.0). The v1 and v1.3 tags are moved to match.'
         required: true
         type: string
 
