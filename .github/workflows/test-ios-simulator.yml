@@ -93,3 +93,17 @@ jobs:
       - name: Fail if wait succeeded unexpectedly
         if: steps.wait.outcome != 'failure'
         run: exit 1
+
+  required-check:
+    name: Test iOS Simulator - Required Check
+    needs:
+      - boot
+      - no-boot
+      - invalid-device
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for failures
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "One of the dependent jobs has failed or was cancelled." && exit 1
