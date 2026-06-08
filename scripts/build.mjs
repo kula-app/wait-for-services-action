@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process';
+import { build } from 'esbuild';
 import { existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,11 +15,17 @@ for (const service of services) {
     process.exit(1);
   }
 
-  const outDir = resolve(root, service, 'dist');
+  const outfile = resolve(root, service, 'dist', 'index.js');
   console.log(`Building ${service}...`);
-  execSync(`ncc build ${entry} -o ${outDir} --source-map --license licenses.txt`, {
-    cwd: root,
-    stdio: 'inherit',
+  await build({
+    entryPoints: [entry],
+    outfile,
+    bundle: true,
+    platform: 'node',
+    target: 'node20',
+    format: 'cjs',
+    sourcemap: true,
+    legalComments: 'external',
   });
   console.log(`  -> ${service}/dist/index.js`);
 }
