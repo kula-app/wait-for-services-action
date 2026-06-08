@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 
-const services = ['tcp', 'mongodb', 'redis', 'nats', 'kafka', 'postgres'];
+const services = ['tcp', 'http', 'mongodb', 'redis', 'nats', 'kafka', 'postgres'];
 
 for (const service of services) {
   const entry = resolve(root, 'src', service, 'index.ts');

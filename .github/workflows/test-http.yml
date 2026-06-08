@@ -1,0 +1,159 @@
+name: Test HTTP
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  universal-reachable:
+    name: Test HTTP (Universal, Reachable)
+    runs-on: ubuntu-latest
+    services:
+      httpbin:
+        image: ghcr.io/mccutchen/go-httpbin:v2.23.0
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
+
+      - name: Wait for HTTP endpoint
+        uses: ./
+        with:
+          type: http
+          host: httpbin
+          port: 8080
+          path: /status/200
+          expected-status: 200
+          timeout: 300
+
+  universal-range:
+    name: Test HTTP (Universal, Range)
+    runs-on: ubuntu-latest
+    services:
+      httpbin:
+        image: ghcr.io/mccutchen/go-httpbin:v2.23.0
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
+
+      - name: Wait for HTTP redirect status
+        uses: ./
+        with:
+          type: http
+          host: httpbin
+          port: 8080
+          path: /status/301
+          expected-status: 300-399
+          timeout: 300
+
+  universal-timeout:
+    name: Test HTTP (Universal, Timeout)
+    runs-on: ubuntu-latest
+    services:
+      httpbin:
+        image: ghcr.io/mccutchen/go-httpbin:v2.23.0
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Patch action.yml
+        run: |
+          sed -i 's|image:\s.*|image: Dockerfile|g' action.yml
+
+      - name: Wait for unexpected HTTP status
+        id: wait-for-http
+        uses: ./
+        continue-on-error: true
+        with:
+          type: http
+          host: httpbin
+          port: 8080
+          path: /status/500
+          expected-status: 200
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-http.outcome != 'failure'
+        run: exit 1
+
+  dedicated-reachable:
+    name: Test HTTP (Dedicated, Reachable)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Start HTTP test server
+        run: node .github/scripts/http-test-server.mjs > http-test-server.log 2>&1 &
+        env:
+          PORT: 8080
+
+      - name: Wait for HTTP endpoint
+        uses: ./http
+        with:
+          host: localhost
+          port: 8080
+          path: /status/200
+          expected-status: 200
+          timeout: 300
+
+  dedicated-range:
+    name: Test HTTP (Dedicated, Range)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Start HTTP test server
+        run: node .github/scripts/http-test-server.mjs > http-test-server.log 2>&1 &
+        env:
+          PORT: 8080
+
+      - name: Wait for HTTP redirect status
+        uses: ./http
+        with:
+          host: localhost
+          port: 8080
+          path: /status/301
+          expected-status: 300-399
+          timeout: 300
+
+  dedicated-timeout:
+    name: Test HTTP (Dedicated, Timeout)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Start HTTP test server
+        run: node .github/scripts/http-test-server.mjs > http-test-server.log 2>&1 &
+        env:
+          PORT: 8080
+
+      - name: Wait for unexpected HTTP status
+        id: wait-for-http
+        uses: ./http
+        continue-on-error: true
+        with:
+          host: localhost
+          port: 8080
+          path: /status/500
+          expected-status: 200
+          timeout: 30
+
+      - name: Fail if wait succeeded unexpectedly
+        if: steps.wait-for-http.outcome != 'failure'
+        run: exit 1

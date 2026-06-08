@@ -72,6 +72,13 @@ validate_inputs() {
     fi
   fi
 
+  if [ "$INPUT_TYPE" = "http" ]; then
+    echo " - ✓ Scheme: ${INPUT_SCHEME:-http}"
+    echo " - ✓ Path: ${INPUT_PATH:-/}"
+    echo " - ✓ Method: ${INPUT_METHOD:-GET}"
+    echo " - ✓ Expected status: ${INPUT_EXPECTED_STATUS:-200}"
+  fi
+
   if ! [[ "$TIMEOUT" =~ ^[0-9]+$ ]]; then
     echo "::error::Invalid timeout value: $TIMEOUT. Must be a number."
     validation_failed=true

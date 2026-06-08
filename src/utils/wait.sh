@@ -52,6 +52,13 @@ wait_for_service() {
       fi
       ;;
 
+    "http")
+      if check_http; then
+        echo "::endgroup::"
+        return 0
+      fi
+      ;;
+
     "android-emulator")
       if check_android_emulator; then
         echo "::endgroup::"
