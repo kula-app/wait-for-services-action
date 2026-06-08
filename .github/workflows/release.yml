@@ -29,39 +29,46 @@ jobs:
     steps:
       - name: Validate version and derive tags
         id: metadata
+        uses: actions/github-script@v9
         env:
           VERSION: ${{ inputs.version }}
-        run: |
-          set -euo pipefail
+        with:
+          script: |
+            const version = process.env.VERSION;
+            if (!/^[0-9]+\.[0-9]+\.[0-9]+$/.test(version)) {
+              core.setFailed(`version must be a full semver 'X.Y.Z' (got '${version}')`);
+              return;
+            }
 
-          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "::error::version must be a full semver 'X.Y.Z' (got '$VERSION')"
-            exit 1
-          fi
+            const [major, minor] = version.split('.');
 
-          MAJOR="${VERSION%%.*}"
-          MINOR="${VERSION#*.}"; MINOR="${MINOR%.*}"
+            core.setOutput('version', version);
+            core.setOutput('tag_name', `v${version}`);
+            core.setOutput('minor_tag', `v${major}.${minor}`);
+            core.setOutput('major_tag', `v${major}`);
 
-          {
-            echo "version=$VERSION"
-            echo "tag_name=v$VERSION"
-            echo "minor_tag=v$MAJOR.$MINOR"
-            echo "major_tag=v$MAJOR"
-          } >> "$GITHUB_OUTPUT"
-
-          echo "Releasing v$VERSION (moving floating tags v$MAJOR.$MINOR and v$MAJOR)"
+            core.info(`Releasing v${version} (moving floating tags v${major}.${minor} and v${major})`);
 
       - name: Ensure tag does not already exist
+        uses: actions/github-script@v9
         env:
-          GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ steps.metadata.outputs.tag_name }}
-        run: |
-          set -euo pipefail
-          if gh api "repos/${{ github.repository }}/git/ref/tags/$TAG_NAME" >/dev/null 2>&1; then
-            echo "::error::tag $TAG_NAME already exists; releases are immutable"
-            exit 1
-          fi
-          echo "$TAG_NAME is available"
+        with:
+          script: |
+            const tag = process.env.TAG_NAME;
+            try {
+              await github.rest.git.getRef({
+                ...context.repo,
+                ref: `tags/${tag}`,
+              });
+            } catch (error) {
+              if (error.status === 404) {
+                core.info(`${tag} is available`);
+                return;
+              }
+              throw error;
+            }
+            core.setFailed(`tag ${tag} already exists; releases are immutable`);
 
   release:
     name: Create Release
@@ -89,7 +96,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: Install dependencies
@@ -140,16 +147,3 @@ jobs:
           generate_release_notes: true
           make_latest: true
           token: ${{ steps.app-token.outputs.token }}
-
-  release-required-check:
-    name: Release - Required Check
-    needs:
-      - prepare
-      - release
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check for failures
-        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
-        run: |
-          echo "One of the release jobs has failed." && exit 1
