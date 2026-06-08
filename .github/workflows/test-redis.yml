@@ -96,3 +96,18 @@ jobs:
       - name: Fail if wait succeeded unexpectedly
         if: steps.wait-for-redis.outcome != 'failure'
         run: exit 1
+
+  required-check:
+    name: Test Redis - Required Check
+    needs:
+      - universal-reachable
+      - universal-timeout
+      - dedicated-reachable
+      - dedicated-timeout
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for failures
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "One of the dependent jobs has failed or was cancelled." && exit 1

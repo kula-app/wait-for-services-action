@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongodb:
-        image: mongo:8.2.5
+        image: mongo:8.3.2
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongodb:
-        image: mongo:8.2.5
+        image: mongo:8.3.2
         ports:
           - 27017:27017
     timeout-minutes: 10
@@ -96,3 +96,18 @@ jobs:
       - name: Fail if wait succeeded unexpectedly
         if: steps.wait-for-mongodb.outcome != 'failure'
         run: exit 1
+
+  required-check:
+    name: Test MongoDB - Required Check
+    needs:
+      - universal-reachable
+      - universal-timeout
+      - dedicated-reachable
+      - dedicated-timeout
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for failures
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: |
+          echo "One of the dependent jobs has failed or was cancelled." && exit 1
