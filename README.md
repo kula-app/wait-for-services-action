@@ -18,6 +18,7 @@ In addition to the root Docker-based action, this repository provides **per-serv
 | [`kafka`](kafka/)                       | Node20 | Admin client topic listing    |
 | [`postgres`](postgres/)                 | Node20 | Native client query           |
 | [`tcp`](tcp/)                           | Node20 | TCP port reachability         |
+| [`http`](http/)                         | Node20 | HTTP status code assertion    |
 | [`android-emulator`](android-emulator/) | Docker | ADB boot status               |
 | [`ios-simulator`](ios-simulator/)       | Shell  | simctl + xcodebuild readiness |
 
@@ -109,6 +110,44 @@ Sub-actions run inline in the workflow and don't require Docker on the runner.
     timeout: 60
 ```
 
+#### HTTP
+
+Waits until an HTTP endpoint returns an expected status code. Supports any HTTP method and asserts the raw status code (redirects are not followed, so families like `300-399` can be matched).
+
+```yaml
+- name: Wait for HTTP endpoint
+  uses: kula-app/wait-for-services-action/http@v1
+  with:
+    host: myservice
+    port: 8080
+    path: /health
+    method: GET
+    expected-status: 200
+    timeout: 60
+```
+
+**Inputs:**
+
+| Input             | Required | Default | Description                                                                                                     |
+| ----------------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------- |
+| `scheme`          | No       | `http`  | URL scheme (`http` or `https`)                                                                                  |
+| `path`            | No       | `/`     | Request path to check                                                                                           |
+| `method`          | No       | `GET`   | HTTP method (`GET`, `POST`, `PUT`, `HEAD`, ...)                                                                 |
+| `expected-status` | No       | `200`   | Accepted status codes as a comma-separated list of single codes and/or ranges, e.g. `200`, `200,204`, `300-399` |
+
+The root Docker action exposes the same check via `type: http`:
+
+```yaml
+- name: Wait for HTTP endpoint
+  uses: kula-app/wait-for-services-action@v1
+  with:
+    type: http
+    host: myservice
+    port: 8080
+    path: /health
+    expected-status: 200,204
+```
+
 #### Android Emulator
 
 ```yaml
@@ -164,21 +203,21 @@ Waits for Apple simulator infrastructure to be ready. Requires a macOS runner wi
 
 ### Root Action
 
-| Input               | Required | Default | Description                                                                        |
-| ------------------- | -------- | ------- | ---------------------------------------------------------------------------------- |
-| `type`              | Yes      | -       | Service type (`mongodb`, `nats`, `kafka`, `postgres`, `redis`, `android-emulator`) |
-| `host`              | Yes      | -       | Host address of the service                                                        |
-| `port`              | Yes      | -       | Port number of the service                                                         |
-| `timeout`           | No       | `20`    | Maximum seconds to wait for service readiness                                      |
-| `interval`          | No       | `1`     | Seconds between readiness checks                                                   |
-| `wait-indefinitely` | No       | `false` | Continue waiting without timeout                                                   |
-| `username`          | No       | -       | Username for PostgreSQL                                                            |
-| `password`          | No       | -       | Password for PostgreSQL/Redis                                                      |
-| `database`          | No       | -       | Database name for PostgreSQL                                                       |
+| Input               | Required | Default | Description                                                                                |
+| ------------------- | -------- | ------- | ------------------------------------------------------------------------------------------ |
+| `type`              | Yes      | -       | Service type (`mongodb`, `nats`, `kafka`, `postgres`, `redis`, `http`, `android-emulator`) |
+| `host`              | Yes      | -       | Host address of the service                                                                |
+| `port`              | Yes      | -       | Port number of the service                                                                 |
+| `timeout`           | No       | `20`    | Maximum seconds to wait for service readiness                                              |
+| `interval`          | No       | `1`     | Seconds between readiness checks                                                           |
+| `wait-indefinitely` | No       | `false` | Continue waiting without timeout                                                           |
+| `username`          | No       | -       | Username for PostgreSQL                                                                    |
+| `password`          | No       | -       | Password for PostgreSQL/Redis                                                              |
+| `database`          | No       | -       | Database name for PostgreSQL                                                               |
 
 ### Sub-Actions
 
-Each sub-action accepts `host`, `port`, `timeout`, `interval`, and `wait-indefinitely`. Service-specific inputs (`username`, `password`, `database`) are only available on the sub-actions that need them (e.g. `postgres`, `redis`).
+Each sub-action accepts `host`, `port`, `timeout`, `interval`, and `wait-indefinitely`. Service-specific inputs are only available on the sub-actions that need them — `username`, `password`, `database` (e.g. `postgres`, `redis`) and `scheme`, `path`, `method`, `expected-status` (`http`).
 
 ## Outputs
 
@@ -232,6 +271,9 @@ src/
   nats/            # NATS check implementation
   kafka/           # Kafka check implementation
   postgres/        # PostgreSQL check implementation
+  tcp/             # TCP port reachability check
+  http/            # HTTP status code check
+  services/        # Shell check implementations for the root Docker action
 __tests__/         # Vitest tests
 scripts/build.mjs  # ncc build script for all services
 <service>/         # Sub-action directories with action.yml + dist/

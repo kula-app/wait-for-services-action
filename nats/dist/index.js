@@ -35266,6 +35266,10 @@ function parseInputs() {
   const username = getInput("username") || void 0;
   const password = getInput("password") || void 0;
   const database = getInput("database") || void 0;
+  const scheme = getInput("scheme") || "http";
+  const path = getInput("path") || "/";
+  const method = (getInput("method") || "GET").toUpperCase();
+  const expectedStatus = getInput("expected-status") || "200";
   if (isNaN(port)) {
     throw new Error(`Invalid port value: ${getInput("port")}`);
   }
@@ -35275,7 +35279,20 @@ function parseInputs() {
   if (isNaN(interval) || interval <= 0) {
     throw new Error(`Invalid interval value: ${getInput("interval")}. Must be a positive number.`);
   }
-  return { host, port, timeout, interval, waitIndefinitely, username, password, database };
+  return {
+    host,
+    port,
+    timeout,
+    interval,
+    waitIndefinitely,
+    username,
+    password,
+    database,
+    scheme,
+    path,
+    method,
+    expectedStatus
+  };
 }
 
 // src/shared/logging.ts
@@ -35292,6 +35309,12 @@ function logConfiguration(serviceName, inputs) {
   }
   if (inputs.database) {
     info(`Database: ${inputs.database}`);
+  }
+  if (serviceName === "http") {
+    info(`Scheme: ${inputs.scheme}`);
+    info(`Path: ${inputs.path}`);
+    info(`Method: ${inputs.method}`);
+    info(`Expected status: ${inputs.expectedStatus}`);
   }
   endGroup();
 }

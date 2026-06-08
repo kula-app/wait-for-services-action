@@ -1,0 +1,47 @@
+name: 'Wait for HTTP Service'
+description: 'Wait for an HTTP endpoint to return an expected status code'
+author: 'kula.app'
+
+branding:
+  icon: 'clock'
+  color: 'blue'
+
+inputs:
+  host:
+    description: 'The host of the service'
+    required: true
+  port:
+    description: 'The port of the service'
+    required: true
+  scheme:
+    description: 'The URL scheme to use (http or https)'
+    required: false
+    default: 'http'
+  path:
+    description: 'The request path to check'
+    required: false
+    default: '/'
+  method:
+    description: 'The HTTP method to use (GET, POST, PUT, HEAD, ...)'
+    required: false
+    default: 'GET'
+  expected-status:
+    description: 'Accepted status codes as a comma-separated list of single codes and/or ranges (e.g. "200", "200,204", "300-399")'
+    required: false
+    default: '200'
+  timeout:
+    description: 'The timeout in seconds for the service to be ready'
+    required: false
+    default: '20'
+  interval:
+    description: 'The interval in seconds to check if the service is ready'
+    required: false
+    default: '1'
+  wait-indefinitely:
+    description: 'If true, the action will wait indefinitely for the service to be ready'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

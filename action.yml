@@ -6,7 +6,7 @@ branding:
 
 inputs:
   type:
-    description: 'The type of service to wait for (android-emulator, kafka, mongodb, nats, postgres, redis)'
+    description: 'The type of service to wait for (android-emulator, http, kafka, mongodb, nats, postgres, redis)'
     required: true
   host:
     description: 'The host of the service'
@@ -23,6 +23,22 @@ inputs:
   database:
     description: 'The database name (for postgres)'
     required: false
+  scheme:
+    description: 'The URL scheme to use for the http check (http or https)'
+    required: false
+    default: 'http'
+  path:
+    description: 'The request path for the http check'
+    required: false
+    default: '/'
+  method:
+    description: 'The HTTP method for the http check (GET, POST, PUT, HEAD, ...)'
+    required: false
+    default: 'GET'
+  expected-status:
+    description: 'Accepted status codes for the http check as a comma-separated list of single codes and/or ranges (e.g. "200", "200,204", "300-399")'
+    required: false
+    default: '200'
   timeout:
     description: 'The timeout in seconds for the service to be ready'
     required: false
@@ -46,6 +62,10 @@ runs:
     INPUT_USERNAME: ${{ inputs.username }}
     INPUT_PASSWORD: ${{ inputs.password }}
     INPUT_DATABASE: ${{ inputs.database }}
+    INPUT_SCHEME: ${{ inputs.scheme }}
+    INPUT_PATH: ${{ inputs.path }}
+    INPUT_METHOD: ${{ inputs.method }}
+    INPUT_EXPECTED_STATUS: ${{ inputs.expected-status }}
     INPUT_TIMEOUT: ${{ inputs.timeout }}
     INPUT_INTERVAL: ${{ inputs.interval }}
     INPUT_WAIT_INDEFINITELY: ${{ inputs.wait-indefinitely }}

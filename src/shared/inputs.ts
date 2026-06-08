@@ -10,6 +10,10 @@ export function parseInputs(): ServiceCheckInputs {
   const username = core.getInput('username') || undefined;
   const password = core.getInput('password') || undefined;
   const database = core.getInput('database') || undefined;
+  const scheme = core.getInput('scheme') || 'http';
+  const path = core.getInput('path') || '/';
+  const method = (core.getInput('method') || 'GET').toUpperCase();
+  const expectedStatus = core.getInput('expected-status') || '200';
 
   if (isNaN(port)) {
     throw new Error(`Invalid port value: ${core.getInput('port')}`);
@@ -21,5 +25,18 @@ export function parseInputs(): ServiceCheckInputs {
     throw new Error(`Invalid interval value: ${core.getInput('interval')}. Must be a positive number.`);
   }
 
-  return { host, port, timeout, interval, waitIndefinitely, username, password, database };
+  return {
+    host,
+    port,
+    timeout,
+    interval,
+    waitIndefinitely,
+    username,
+    password,
+    database,
+    scheme,
+    path,
+    method,
+    expectedStatus,
+  };
 }

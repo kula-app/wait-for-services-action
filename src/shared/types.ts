@@ -7,6 +7,10 @@ export interface ServiceCheckInputs {
   username?: string;
   password?: string;
   database?: string;
+  scheme?: string;
+  path?: string;
+  method?: string;
+  expectedStatus?: string;
 }
 
 export type CheckFunction = (inputs: ServiceCheckInputs) => Promise<void>;

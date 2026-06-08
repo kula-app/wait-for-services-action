@@ -28,6 +28,9 @@ if [ -n "$INPUT_TYPE" ]; then
   "redis")
     source "$(dirname "$0")/src/services/redis.sh"
     ;;
+  "http")
+    source "$(dirname "$0")/src/services/http.sh"
+    ;;
   "android-emulator")
     source "$(dirname "$0")/src/services/android-emulator.sh"
     ;;
@@ -49,6 +52,12 @@ if [ "$INPUT_TYPE" = "postgres" ]; then
   if [ -n "$INPUT_DATABASE" ]; then
     echo " - Postgres database: $INPUT_DATABASE"
   fi
+fi
+if [ "$INPUT_TYPE" = "http" ]; then
+  echo " - Scheme: ${INPUT_SCHEME:-http}"
+  echo " - Path: ${INPUT_PATH:-/}"
+  echo " - Method: ${INPUT_METHOD:-GET}"
+  echo " - Expected status: ${INPUT_EXPECTED_STATUS:-200}"
 fi
 echo " - Timeout: $TIMEOUT seconds"
 echo " - Check interval: $INTERVAL seconds"

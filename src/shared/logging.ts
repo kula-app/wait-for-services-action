@@ -15,6 +15,12 @@ export function logConfiguration(serviceName: string, inputs: ServiceCheckInputs
   if (inputs.database) {
     core.info(`Database: ${inputs.database}`);
   }
+  if (serviceName === 'http') {
+    core.info(`Scheme: ${inputs.scheme}`);
+    core.info(`Path: ${inputs.path}`);
+    core.info(`Method: ${inputs.method}`);
+    core.info(`Expected status: ${inputs.expectedStatus}`);
+  }
   core.endGroup();
 }
 
