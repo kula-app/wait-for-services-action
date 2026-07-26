@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       httpbin:
-        image: ghcr.io/mccutchen/go-httpbin:2.23.0
+        image: ghcr.io/mccutchen/go-httpbin:2.25.0
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       httpbin:
-        image: ghcr.io/mccutchen/go-httpbin:2.23.0
+        image: ghcr.io/mccutchen/go-httpbin:2.25.0
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       httpbin:
-        image: ghcr.io/mccutchen/go-httpbin:2.23.0
+        image: ghcr.io/mccutchen/go-httpbin:2.25.0
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
