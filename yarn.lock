@@ -398,12 +398,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@mongodb-js/saslprep@npm:^1.3.0":
-  version: 1.4.6
-  resolution: "@mongodb-js/saslprep@npm:1.4.6"
+"@mongodb-js/saslprep@npm:^1.4.11":
+  version: 1.5.0
+  resolution: "@mongodb-js/saslprep@npm:1.5.0"
   dependencies:
     sparse-bitfield: "npm:^3.0.3"
-  checksum: 10c0/bc429bad416b413ded91ef5b74da544b6ce819c5cba49bdad90fd318215e012c22b3c5eb8e2e12fd437d5efa6b8c00361b61dd147483b3c312962574a3831afd
+  checksum: 10c0/4ec18504e567f494159b9649c5b30c0be88380cfee3a3c4e1ef33bd70a070adf3bbb8ab9946d4aab52e929b07322257621d139205300c78cd9da1e9d021008e6
   languageName: node
   linkType: hard
 
@@ -1835,29 +1835,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb-connection-string-url@npm:^7.0.0":
-  version: 7.0.1
-  resolution: "mongodb-connection-string-url@npm:7.0.1"
+"mongodb-connection-string-url@npm:^7.0.1":
+  version: 7.0.2
+  resolution: "mongodb-connection-string-url@npm:7.0.2"
   dependencies:
     "@types/whatwg-url": "npm:^13.0.0"
     whatwg-url: "npm:^14.1.0"
-  checksum: 10c0/0124edacc556bfb8d7b63b7fe7a1d9e641120fb614ccd40e656c9a948d308280956d41e375ccee01738e13d0fdccaf6d5a95e81b70f05b901e721fa5a9bebd2c
+  checksum: 10c0/f705457af027d6e05819c863361707acf541499f424793c5c38a5cdefaeb26bb7356e99e82e9145e2e74ca8f28b35f02dadd154a1ecda0528ba1f9927ebe7ae8
   languageName: node
   linkType: hard
 
 "mongodb@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "mongodb@npm:7.2.0"
+  version: 7.6.0
+  resolution: "mongodb@npm:7.6.0"
   dependencies:
-    "@mongodb-js/saslprep": "npm:^1.3.0"
+    "@mongodb-js/saslprep": "npm:^1.4.11"
     bson: "npm:^7.2.0"
-    mongodb-connection-string-url: "npm:^7.0.0"
+    mongodb-connection-string-url: "npm:^7.0.1"
   peerDependencies:
     "@aws-sdk/credential-providers": ^3.806.0
     "@mongodb-js/zstd": ^7.0.0
     gcp-metadata: ^7.0.1
     kerberos: ^7.0.0
-    mongodb-client-encryption: ">=7.0.0 <7.1.0"
+    mongodb-client-encryption: ^7.2.0
     snappy: ^7.3.2
     socks: ^2.8.6
   peerDependenciesMeta:
@@ -1875,7 +1875,7 @@ __metadata:
       optional: true
     socks:
       optional: true
-  checksum: 10c0/f5644558fe97f73c4826d7b5bdf92c53903810cff03e9565535605c8b5c8a940d60aef6b52c4a5f001b2693da8eecf1a1ef36b12fbd886dc0faf9eb02e820b7a
+  checksum: 10c0/91f45d49aaa17af40b1dbd4f5eff85fd11f12c7df993cadbe51e96c31f40c74596b2d979f7eeebb376889a1397deb9081db10cbb0e8904853c80b1f2fcddf7d0
   languageName: node
   linkType: hard
 
